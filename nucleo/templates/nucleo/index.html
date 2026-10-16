@@ -13,6 +13,19 @@
 
     <h1>Lista de Colaboradores</h1>
 
+    <form method="GET" action="{% url 'home' %}">
+        <input
+            type="text"
+            name="busca"
+            placeholder="Pesquisar colaborador pelo nome"
+            value="{{ busca }}"
+        >
+        <button type="submit">Pesquisar</button>
+        <a class="botao" href="{% url 'home' %}">Limpar</a>
+    </form>
+
+    <br>
+
     <div class="tabela-container">
         <table>
             <thead>
@@ -44,7 +57,11 @@
                 {% empty %}
                 <tr>
                     <td colspan="7">
-                        Nenhum colaborador cadastrado.
+                        {% if busca %}
+                            Nenhum colaborador encontrado com esse nome.
+                        {% else %}
+                            Nenhum colaborador cadastrado.
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
@@ -52,4 +69,5 @@
         </table>
     </div>
 </div>
-{% endblock %}         
+{% endblock %}
+       

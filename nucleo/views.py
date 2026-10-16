@@ -32,9 +32,17 @@ def atualizar_status_equipamento(equipamento):
 
 
 def home(request):
+    busca = request.GET.get('busca', '').strip()
+
     colaboradores = Colaborador.objects.all().order_by('nome')
-    return render(request, 'nucleo/index.html',
-                  {'colaboradores': colaboradores})
+
+    if busca:
+        colaboradores = colaboradores.filter(nome__icontains=busca)
+
+    return render(request, 'nucleo/index.html', {
+        'colaboradores': colaboradores,
+        'busca': busca
+    })
 
 
 def cadastrar_colaborador(request):
@@ -42,7 +50,7 @@ def cadastrar_colaborador(request):
     if request.method == 'POST' and form.is_valid():
         form.save()
         messages.success(request, 'Colaborador cadastrado com sucesso!')
-        return redirect('home')
+        return redirect('cadastrar_colaborador')
     return render(request, 'nucleo/forms/form_colaborador.html',
                   {'form': form, 'titulo': 'Cadastrar colaborador'})
 
