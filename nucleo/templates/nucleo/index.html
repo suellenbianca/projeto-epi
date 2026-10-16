@@ -1,17 +1,55 @@
-{% load static %}
+{% extends 'nucleo/base.html' %}
 
-<!DOCTYPE html>
-<html>
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <div class="container">
-        <h1>Hello World!</h1>
-        <p>Minha primeira página otimizada para celular.</p>
+{% block content %}
+<div class="painel">
+    <h1>Gestão de Colaboradores</h1>
+    <p>Cadastre e gerencie os colaboradores.</p>
+
+    <p>
+        <a class="botao" href="{% url 'cadastrar_colaborador' %}">
+            + Cadastrar colaborador
+        </a>
+    </p>
+
+    <h1>Lista de Colaboradores</h1>
+
+    <div class="tabela-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Cargo</th>
+                    <th>Setor</th>
+                    <th>Telefone</th>
+                    <th>E-mail</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for colaborador in colaboradores %}
+                <tr>
+                    <td>{{ colaborador.nome }}</td>
+                    <td>{{ colaborador.cpf }}</td>
+                    <td>{{ colaborador.cargo }}</td>
+                    <td>{{ colaborador.setor }}</td>
+                    <td>{{ colaborador.telefone }}</td>
+                    <td>{{ colaborador.email }}</td>
+                    <td class="acoes">
+                        <a href="{% url 'editar_colaborador' colaborador.id %}">Editar</a>
+                        <a href="{% url 'excluir_colaborador' colaborador.id %}">Excluir</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">
+                        Nenhum colaborador cadastrado.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}         

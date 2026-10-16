@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de EPI</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            
+          <h2>Controle de EPI</h2>
+
+          <a href="{% url 'home' %}">Home</a>
+
+         <h3>Cadastros</h3>
+         <a href="{% url 'home' %}">Colaboradores</a>
+         <a href="{% url 'listar_equipamentos' %}">Equipamentos</a>
+
+         <h3>Ação</h3>
+         <a href="{% url 'controle_epi' %}">Controle de EPI</a>
+
+         <h3>Relatórios</h3>
+         <a href="{% url 'listar_emprestimos' %}">Empréstimos</a>
+
+         <h3>Configurações</h3>
+         <a href="{% url 'perfil' %}">Perfil</a>
+         <a href="{% url 'sistema' %}">Sistema</a>
+
+         <h3>Conta</h3>
+         <a href="{% url 'sair' %}">Sair</a>
+
+        </aside>
+
+        <main class="conteudo">
+            <header class="topbar">
+                <strong>Tela de Controle de EPI</strong>
+                <span>Usuário</span>
+            </header>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mensagem {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+</body>
+</html>

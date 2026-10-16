@@ -1,0 +1,111 @@
+{% extends 'nucleo/base.html' %}
+
+{% block content %}
+<div class="painel">
+    <div class="titulo-linha">
+        <div>
+            <h1>Empréstimos</h1>
+            <p>Consulte e gerencie os empréstimos de EPI.</p>
+        </div>
+
+        <a href="{% url 'cadastrar_emprestimo' %}" class="botao">
+            + Criar empréstimo
+        </a>
+    </div>
+
+    <div class="indicadores">
+        <div class="indicador">
+            <span>Disponível</span>
+            <strong>{{ total_disponiveis }}</strong>
+        </div>
+
+        <div class="indicador">
+            <span>Emprestado</span>
+            <strong>{{ total_emprestados }}</strong>
+        </div>
+
+        <div class="indicador">
+            <span>Vencido</span>
+            <strong>{{ total_vencidos }}</strong>
+        </div>
+    </div>
+
+    <form method="GET" class="filtros">
+        <div class="campo">
+            <label for="busca">Pesquisar colaborador</label>
+            <input
+                type="text"
+                id="busca"
+                name="busca"
+                value="{{ busca }}"
+                placeholder="Nome do colaborador"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="equipamento">Equipamento</label>
+            <input
+                type="text"
+                id="equipamento"
+                name="equipamento"
+                value="{{ equipamento }}"
+                placeholder="Nome do equipamento"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">Todos os status</option>
+                <option value="EMPRESTADO" {% if status == 'EMPRESTADO' %}selected{% endif %}>Emprestado</option>
+                <option value="FORNECIDO" {% if status == 'FORNECIDO' %}selected{% endif %}>Fornecido</option>
+                <option value="DEVOLVIDO" {% if status == 'DEVOLVIDO' %}selected{% endif %}>Devolvido</option>
+                <option value="DANIFICADO" {% if status == 'DANIFICADO' %}selected{% endif %}>Danificado</option>
+                <option value="PERDIDO" {% if status == 'PERDIDO' %}selected{% endif %}>Perdido</option>
+            </select>
+        </div>
+
+        <button type="submit">Pesquisar</button>
+        <a href="{% url 'listar_emprestimos' %}" class="botao">Limpar</a>
+    </form>
+
+    <div class="tabela-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Equipamento</th>
+                    <th>Colaborador</th>
+                    <th>Data do empréstimo</th>
+                    <th>Data prevista de devolução</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for emprestimo in emprestimos %}
+                <tr>
+                    <td>{{ emprestimo.equipamento.nome }}</td>
+                    <td>{{ emprestimo.colaborador.nome }}</td>
+                    <td>{{ emprestimo.data_emprestimo|date:"d/m/Y" }}</td>
+                    <td>{{ emprestimo.data_prevista_devolucao|date:"d/m/Y" }}</td>
+                    <td>{{ emprestimo.get_status_display }}</td>
+                    <td>
+                        <div class="acoes">
+                            <a href="{% url 'editar_emprestimo' emprestimo.id %}">Editar</a>
+                            <a href="{% url 'excluir_emprestimo' emprestimo.id %}">Excluir</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="sem-resultados">
+                        Desculpe, mas não encontramos dados correspondentes à sua busca :(
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'nucleo/base.html' %}
+
+{% block content %}
+<div class="painel">
+    <h1>Cadastro de Equipamento</h1>
+    <p>Preencha os dados do equipamento de proteção individual.</p>
+
+    <form method="POST" class="formulario">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div class="botoes-formulario">
+            <button type="submit">Salvar equipamento</button>
+            <a href="{% url 'listar_equipamentos' %}" class="botao">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

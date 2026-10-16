@@ -1,0 +1,57 @@
+
+{% extends 'nucleo/base.html' %}
+
+{% block content %}
+<div class="painel formulario-colaborador">
+    <div class="cabecalho-formulario">
+        <h1>
+            {% if form.instance.pk %}
+                Editar colaborador
+            {% else %}
+                Cadastrar colaborador
+            {% endif %}
+        </h1>
+        <p>Preencha os dados do colaborador nos campos abaixo.</p>
+    </div>
+
+    <form method="POST" class="formulario">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="mensagem error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="grade-formulario">
+            {% for field in form %}
+                <div class="campo-formulario">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% for error in field.errors %}
+                        <small class="erro-campo">{{ error }}</small>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="botoes-formulario">
+            <button type="submit">
+                {% if form.instance.pk %}
+                    Salvar alterações
+                {% else %}
+                    Cadastrar colaborador
+                {% endif %}
+            </button>
+
+            <a href="{% url 'home' %}" class="botao botao-cancelar">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

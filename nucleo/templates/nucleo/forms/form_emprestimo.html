@@ -1,0 +1,70 @@
+
+{% extends 'nucleo/base.html' %}
+
+{% block content %}
+<div class="painel">
+    <h1>Cadastro de Empréstimo de EPI</h1>
+    <p>Preencha os dados para registrar a entrega do equipamento.</p>
+
+    <form method="POST" class="formulario">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="mensagem error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            <p
+                {% if field.name == 'data_devolucao' or field.name == 'observacao_devolucao' %}
+                    id="grupo_{{ field.name }}"
+                {% endif %}
+            >
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </p>
+        {% endfor %}
+
+        <div class="botoes-formulario">
+            <button type="submit">Salvar empréstimo</button>
+            <a href="{% url 'listar_emprestimos' %}" class="botao">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const status = document.getElementById('id_status');
+    const grupoData = document.getElementById('grupo_data_devolucao');
+    const grupoObservacao = document.getElementById('grupo_observacao_devolucao');
+
+    function atualizarCampos() {
+        const exigeDevolucao = [
+            'DEVOLVIDO',
+            'DANIFICADO',
+            'PERDIDO'
+        ].includes(status.value);
+
+        grupoData.style.display = exigeDevolucao ? '' : 'none';
+        grupoObservacao.style.display = exigeDevolucao ? '' : 'none';
+    }
+
+    status.addEventListener('change', atualizarCampos);
+    atualizarCampos();
+});
+</script>
+{% endblock %}

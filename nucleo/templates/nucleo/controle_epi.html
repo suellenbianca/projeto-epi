@@ -1,0 +1,92 @@
+{% extends 'nucleo/base.html' %}
+
+{% block content %}
+<div class="painel">
+    <div class="titulo-linha">
+        <div>
+            <h1>Controle de EPI</h1>
+            <p>Consulte os equipamentos entregues aos colaboradores.</p>
+        </div>
+        <a href="{% url 'cadastrar_emprestimo' %}" class="botao">
+            + Novo registro
+        </a>
+    </div>
+
+    <form method="GET" class="filtros">
+        <div class="campo">
+            <label for="busca">Nome do colaborador</label>
+            <input
+                type="text"
+                id="busca"
+                name="busca"
+                value="{{ busca }}"
+                placeholder="Pesquisar colaborador"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="equipamento">Equipamento</label>
+            <input
+                type="text"
+                id="equipamento"
+                name="equipamento"
+                value="{{ equipamento }}"
+                placeholder="Pesquisar equipamento"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">Todos</option>
+                <option value="EMPRESTADO" {% if status == 'EMPRESTADO' %}selected{% endif %}>Emprestado</option>
+                <option value="FORNECIDO" {% if status == 'FORNECIDO' %}selected{% endif %}>Fornecido</option>
+                <option value="DEVOLVIDO" {% if status == 'DEVOLVIDO' %}selected{% endif %}>Devolvido</option>
+                <option value="DANIFICADO" {% if status == 'DANIFICADO' %}selected{% endif %}>Danificado</option>
+                <option value="PERDIDO" {% if status == 'PERDIDO' %}selected{% endif %}>Perdido</option>
+            </select>
+        </div>
+
+        <button type="submit">Pesquisar</button>
+        <a href="{% url 'controle_epi' %}" class="botao">Limpar</a>
+    </form>
+
+    <div class="tabela-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Empréstimo</th>
+                    <th>Data prevista de devolução</th>
+                    <th>Status</th>
+                    <th>Equipamento</th>
+                    <th>Nome do colaborador</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for emprestimo in emprestimos %}
+                <tr>
+                    <td>{{ emprestimo.id }}</td>
+                    <td>{{ emprestimo.data_prevista_devolucao|date:"d/m/Y" }}</td>
+                    <td>{{ emprestimo.get_status_display }}</td>
+                    <td>{{ emprestimo.equipamento.nome }}</td>
+                    <td>{{ emprestimo.colaborador.nome }}</td>
+                    <td>
+                        <a href="{% url 'editar_emprestimo' emprestimo.id %}">
+                            Editar
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="sem-resultados">
+                        Desculpe, mas não encontramos dados correspondentes à sua busca :(
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

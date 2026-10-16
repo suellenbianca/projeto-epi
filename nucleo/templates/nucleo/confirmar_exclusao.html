@@ -1,0 +1,36 @@
+
+{% extends 'nucleo/base.html' %}
+
+{% block content %}
+<div class="fundo-modal">
+    <div class="modal-confirmacao">
+        <div class="icone-confirmacao">!</div>
+
+        <h1>{{ titulo }}</h1>
+
+        <p>Você quer remover este registro?</p>
+
+        <div class="registro-confirmacao">
+            <strong>{{ objeto }}</strong>
+        </div>
+
+        <p class="aviso-confirmacao">
+            Esta ação não poderá ser desfeita.
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="botoes-formulario">
+                <a href="{% url cancel_url %}" class="botao botao-cancelar">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="botao-excluir">
+                    Remover!
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
