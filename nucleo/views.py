@@ -34,7 +34,7 @@ def atualizar_status_equipamento(equipamento):
 def home(request):
     busca = request.GET.get('busca', '').strip()
 
-    colaboradores = Colaborador.objects.all().order_by('nome')
+    colaboradores = Colaborador.objects.all().order_by('id')
 
     if busca:
         colaboradores = colaboradores.filter(nome__icontains=busca)
@@ -96,31 +96,61 @@ def listar_equipamentos(request):
                   {'equipamentos': equipamentos})
 
 
+
 def cadastrar_equipamento(request):
     form = EquipamentoForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        messages.success(request, 'Equipamento cadastrado!')
-        return redirect('listar_equipamentos')
-    return render(request, 'nucleo/forms/form_equipamento.html', {'form': form})
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                'Equipamento cadastrado com sucesso!'
+            )
+            return redirect('cadastrar_equipamento')
+
+        messages.error(
+            request,
+            'Não foi possível cadastrar o equipamento. Verifique os dados.'
+        )
+
+    return render(
+        request,
+        'nucleo/forms/form_equipamento.html',
+        {'form': form}
+    )
 
 
 def editar_equipamento(request, id):
     equipamento = get_object_or_404(Equipamento, id=id)
     form = EquipamentoForm(request.POST or None, instance=equipamento)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        messages.success(request, 'Equipamento atualizado!')
-        return redirect('listar_equipamentos')
-    return render(request, 'nucleo/forms/form_equipamento.html', {'form': form})
 
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                'Equipamento atualizado com sucesso!'
+            )
+            return redirect('listar_equipamentos')
+
+        messages.error(
+            request,
+            'Não foi possível atualizar o equipamento. Verifique os dados.'
+        )
+
+    return render(
+        request,
+        'nucleo/forms/form_equipamento.html',
+        {'form': form}
+    )
 
 def excluir_equipamento(request, id):
     equipamento = get_object_or_404(Equipamento, id=id)
     if request.method == 'POST':
         try:
             equipamento.delete()
-            messages.success(request, 'Equipamento excluído!')
+            messages.success(request, 'Equipamento excluído com sucesso!')
         except Exception:
             messages.error(request, 'Não foi possível excluir este equipamento.')
         return redirect('listar_equipamentos')
@@ -142,7 +172,8 @@ def listar_emprestimos(request):
     ).count()
 
     total_emprestados = Emprestimo.objects.filter(
-        status='EMPRESTADO'
+        status='EMPRESTADO',
+        data_prevista_devolucao__gte=timezone.localdate()
     ).count()
 
     total_vencidos = Emprestimo.objects.filter(
@@ -203,7 +234,8 @@ def editar_emprestimo(request, id):
 
     form = EmprestimoForm(
         request.POST or None,
-        instance=emprestimo
+        instance=emprestimo,
+        edicao=True
     )
 
     if request.method == 'POST' and form.is_valid():

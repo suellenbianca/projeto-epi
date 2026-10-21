@@ -1,4 +1,5 @@
 from django import forms
+from django.utils import timezone
 from .models import Colaborador, Equipamento, Emprestimo
 
 
@@ -71,6 +72,27 @@ class EquipamentoForm(forms.ModelForm):
 
 
 class EmprestimoForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        self.edicao = kwargs.pop('edicao', False)
+        super().__init__(*args, **kwargs)
+
+        if not self.edicao:
+            self.fields['status'].choices = [
+                ('EMPRESTADO', 'Emprestado'),
+                ('FORNECIDO', 'Fornecido'),
+            ]
+        else:
+            campos_bloqueados = [
+                'equipamento',
+                'colaborador',
+                'data_emprestimo',
+                'data_prevista_devolucao',
+            ]
+
+            for campo in campos_bloqueados:
+                self.fields[campo].disabled = True
+
     class Meta:
         model = Emprestimo
         fields = [
@@ -94,26 +116,69 @@ class EmprestimoForm(forms.ModelForm):
             'observacao_devolucao': 'Observação',
         }
         widgets = {
-            'data_emprestimo': forms.DateInput(attrs={'type': 'date'}),
-            'data_prevista_devolucao': forms.DateInput(attrs={'type': 'date'}),
-            'data_devolucao': forms.DateInput(attrs={'type': 'date'}),
+            'data_emprestimo': forms.DateInput(
+                 format='%Y-%m-%d',
+                 attrs={'type': 'date'}
+            ),
+            'data_prevista_devolucao': forms.DateInput(
+                 format='%Y-%m-%d',
+                 attrs={'type': 'date'}
+            ),
+            'data_devolucao': forms.DateInput(
+                 format='%Y-%m-%d',
+                 attrs={'type': 'date'}
+            ),
         }
 
+
     def clean(self):
-        dados = super().clean()
-        status = dados.get('status')
+     dados = super().clean()
+     status = dados.get('status')
+     equipamento = dados.get('equipamento')
 
-        if status in ['DEVOLVIDO', 'DANIFICADO', 'PERDIDO']:
-            if not dados.get('data_devolucao'):
-                self.add_error(
-                    'data_devolucao',
-                    'Informe a data da devolução ou ocorrência.'
-                )
-        
-            if not dados.get('observacao_devolucao'):
-                self.add_error(
-                    'observacao_devolucao',
-                    'Preencha a observação para esse status.'
-                )
+     if status in ['DEVOLVIDO', 'DANIFICADO', 'PERDIDO']:
+        if not dados.get('data_devolucao'):
+            self.add_error(
+                'data_devolucao',
+                'Informe a data da devolução ou ocorrência.'
+            )
 
-        return dados
+        if not dados.get('observacao_devolucao'):
+            self.add_error(
+                'observacao_devolucao',
+                'Preencha a observação para esse status.'
+            )
+
+     data_prevista = dados.get('data_prevista_devolucao')
+ 
+     if (
+          not self.edicao
+          and data_prevista
+          and data_prevista <= timezone.localdate()
+    ):
+         
+         self.add_error(
+          'data_prevista_devolucao',
+          'A data prevista de devolução deve ser posterior à data de hoje.'
+         )
+
+     if equipamento and status in ['EMPRESTADO', 'FORNECIDO']:
+        print("VALIDAÇÃO EXECUTADA:", equipamento, status)
+
+        emprestimos_ativos = Emprestimo.objects.filter(
+            equipamento=equipamento,
+            status__in=['EMPRESTADO', 'FORNECIDO']
+        )
+
+        if self.instance and self.instance.pk:
+            emprestimos_ativos = emprestimos_ativos.exclude(
+                pk=self.instance.pk
+            )
+
+        if emprestimos_ativos.exists():
+            self.add_error(
+                'equipamento',
+                'Este equipamento já possui um empréstimo ativo.'
+            )
+
+     return dados

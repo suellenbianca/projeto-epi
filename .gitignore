@@ -5,3 +5,6 @@ venv/
 .env
 db.sqlite3
 db.sqlite3.backup
+# Banco de dados e arquivos locais
+dados/
+*.sqlite3

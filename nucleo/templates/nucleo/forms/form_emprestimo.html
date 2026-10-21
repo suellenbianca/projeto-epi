@@ -1,10 +1,15 @@
-
 {% extends 'nucleo/base.html' %}
 
 {% block content %}
 <div class="painel">
+{% if form.instance.pk %}
+    <h1>Editar Empréstimo de EPI</h1>
+    <p>Atualize o status e as informações da devolução do equipamento.</p>
+{% else %}
+
     <h1>Cadastro de Empréstimo de EPI</h1>
     <p>Preencha os dados para registrar a entrega do equipamento.</p>
+{% endif %}
 
     <form method="POST" class="formulario">
         {% csrf_token %}

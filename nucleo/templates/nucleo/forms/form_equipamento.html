@@ -2,8 +2,15 @@
 
 {% block content %}
 <div class="painel">
+{% if form.instance.pk %}
+
+    <h1>Editar Equipamento</h1>
+    <p>Atualize as informações do equipamento cadastrado.</p>
+{% else %}
+
     <h1>Cadastro de Equipamento</h1>
     <p>Preencha os dados do equipamento de proteção individual.</p>
+{% endif %}
 
     <form method="POST" class="formulario">
         {% csrf_token %}
