@@ -210,22 +210,32 @@ def listar_emprestimos(request):
     })
 
 
+
 def cadastrar_emprestimo(request):
     form = EmprestimoForm(request.POST or None)
 
-    if request.method == 'POST' and form.is_valid():
-        emprestimo = form.save()
-        atualizar_status_equipamento(emprestimo.equipamento)
+    if request.method == 'POST':
+        if form.is_valid():
+            emprestimo = form.save()
+            atualizar_status_equipamento(emprestimo.equipamento)
 
-        messages.success(request, 'Empréstimo registrado!')
-        return redirect('listar_emprestimos')
+            messages.success(
+                request,
+                'Empréstimo registrado com sucesso!'
+            )
+            return redirect('listar_emprestimos')
+
+        messages.error(
+            request,
+            'Não foi possível cadastrar o empréstimo. '
+            'Verifique os dados informados.'
+        )
 
     return render(
         request,
         'nucleo/forms/form_emprestimo.html',
         {'form': form}
     )
-
 
 
 def editar_emprestimo(request, id):
