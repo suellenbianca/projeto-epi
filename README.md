@@ -256,7 +256,6 @@ O código-fonte do projeto está disponível em:
 
 https://github.com/suellenbianca/projeto-epi
 
-O banco de dados local não deve ser publicado no GitHub, pois pode conter informações pessoais, como CPF, telefone e e-mail. O arquivo `db.sqlite3` deve permanecer fora do repositório. Para demonstrações ou avaliações, prefira utilizar dados fictícios ou compartilhar uma cópia do banco somente por um meio autorizado e seguro.
 
 ## Autor
 
