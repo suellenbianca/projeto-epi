@@ -1,9 +1,12 @@
-
 {% extends 'nucleo/base.html' %}
 
 {% block content %}
 <div class="painel">
     <h1>Configurações do Sistema</h1>
-    <p>Área destinada às configurações do sistema de Controle de EPI.</p>
+    <p>Configurações gerais do sistema de Controle de EPI.</p>
+
+    <p>Usuário conectado: <strong>{{ request.user.username }}</strong></p>
+
+    <p>Esta área é destinada à consulta das informações gerais do sistema.</p>
 </div>
 {% endblock %}

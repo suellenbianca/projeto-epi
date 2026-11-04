@@ -7,10 +7,11 @@
             <h1>Empréstimos</h1>
             <p>Consulte e gerencie os empréstimos de EPI.</p>
         </div>
-
+     {% if perms.nucleo.add_emprestimo %}
         <a href="{% url 'cadastrar_emprestimo' %}" class="botao">
             + Criar empréstimo
         </a>
+     {% endif %}
     </div>
 
     <div class="indicadores">
@@ -92,8 +93,13 @@
                     <td>{{ emprestimo.get_status_display }}</td>
                     <td>
                         <div class="acoes">
+                          {% if perms.nucleo.change_emprestimo %}
                             <a href="{% url 'editar_emprestimo' emprestimo.id %}">Editar</a>
+                          {% endif %}
+
+                          {% if perms.nucleo.delete_emprestimo %}
                             <a href="{% url 'excluir_emprestimo' emprestimo.id %}">Excluir</a>
+                          {% endif %}
                         </div>
                     </td>
                 </tr>

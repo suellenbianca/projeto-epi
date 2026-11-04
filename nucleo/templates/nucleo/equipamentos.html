@@ -4,9 +4,13 @@
 <div class="painel">
     <div class="titulo-linha">
         <h1>Gestão de Equipamentos</h1>
+    
+    {% if perms.nucleo.add_equipamento %}
         <a href="{% url 'cadastrar_equipamento' %}" class="botao">
             + Cadastrar equipamento
         </a>
+    {% endif %}
+
     </div>
 
     <p>Cadastre e gerencie os equipamentos de proteção individual.</p>
@@ -29,8 +33,14 @@
                     <td>{{ equipamento.get_status_display }}</td>
                     <td>
                         <div class="acoes">
+                        
+                         {% if perms.nucleo.change_equipamento %}    
                             <a href="{% url 'editar_equipamento' equipamento.id %}">Editar</a>
+                         {% endif %}
+
+                         {% if perms.nucleo.delete_equipamento %}
                             <a href="{% url 'excluir_equipamento' equipamento.id %}">Excluir</a>
+                         {% endif %}
                         </div>
                     </td>
                 </tr>

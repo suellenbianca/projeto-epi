@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Colaborador, Equipamento, Emprestimo
 from .forms import ColaboradorForm, EquipamentoForm, EmprestimoForm
 from django.utils import timezone
-from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required, permission_required
 
 
 def atualizar_status_equipamento(equipamento):
@@ -30,7 +30,8 @@ def atualizar_status_equipamento(equipamento):
     equipamento.save(update_fields=['status'])
 
 
-
+@login_required
+@permission_required('nucleo.view_colaborador', raise_exception=True)
 def home(request):
     busca = request.GET.get('busca', '').strip()
 
@@ -44,7 +45,8 @@ def home(request):
         'busca': busca
     })
 
-
+@login_required
+@permission_required('nucleo.add_colaborador', raise_exception=True)
 def cadastrar_colaborador(request):
     form = ColaboradorForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -54,7 +56,8 @@ def cadastrar_colaborador(request):
     return render(request, 'nucleo/forms/form_colaborador.html',
                   {'form': form, 'titulo': 'Cadastrar colaborador'})
 
-
+@login_required
+@permission_required('nucleo.change_colaborador', raise_exception=True)
 def editar_colaborador(request, id):
     colaborador = get_object_or_404(Colaborador, id=id)
     form = ColaboradorForm(request.POST or None, instance=colaborador)
@@ -65,7 +68,8 @@ def editar_colaborador(request, id):
     return render(request, 'nucleo/forms/form_colaborador.html',
                   {'form': form, 'titulo': 'Editar colaborador'})
 
-
+@login_required
+@permission_required('nucleo.delete_colaborador', raise_exception=True)
 def excluir_colaborador(request, id):
     colaborador = get_object_or_404(Colaborador, id=id)
 
@@ -89,14 +93,16 @@ def excluir_colaborador(request, id):
         'cancel_url': 'home'
     })
 
-
+@login_required
+@permission_required('nucleo.view_equipamento', raise_exception=True)
 def listar_equipamentos(request):
     equipamentos = Equipamento.objects.all().order_by('nome')
     return render(request, 'nucleo/equipamentos.html',
                   {'equipamentos': equipamentos})
 
 
-
+@login_required
+@permission_required('nucleo.add_equipamento', raise_exception=True)
 def cadastrar_equipamento(request):
     form = EquipamentoForm(request.POST or None)
 
@@ -120,7 +126,8 @@ def cadastrar_equipamento(request):
         {'form': form}
     )
 
-
+@login_required
+@permission_required('nucleo.change_equipamento', raise_exception=True)
 def editar_equipamento(request, id):
     equipamento = get_object_or_404(Equipamento, id=id)
     form = EquipamentoForm(request.POST or None, instance=equipamento)
@@ -145,6 +152,8 @@ def editar_equipamento(request, id):
         {'form': form}
     )
 
+@login_required
+@permission_required('nucleo.delete_equipamento', raise_exception=True)
 def excluir_equipamento(request, id):
     equipamento = get_object_or_404(Equipamento, id=id)
     if request.method == 'POST':
@@ -160,7 +169,8 @@ def excluir_equipamento(request, id):
     'cancel_url': 'listar_equipamentos'
 })
 
-
+@login_required
+@permission_required('nucleo.view_emprestimo', raise_exception=True)
 def listar_emprestimos(request):
     emprestimos = Emprestimo.objects.select_related(
         'equipamento', 'colaborador'
@@ -210,7 +220,8 @@ def listar_emprestimos(request):
     })
 
 
-
+@login_required
+@permission_required('nucleo.add_emprestimo', raise_exception=True)
 def cadastrar_emprestimo(request):
     form = EmprestimoForm(request.POST or None)
 
@@ -237,7 +248,8 @@ def cadastrar_emprestimo(request):
         {'form': form}
     )
 
-
+@login_required
+@permission_required('nucleo.change_emprestimo', raise_exception=True)
 def editar_emprestimo(request, id):
     emprestimo = get_object_or_404(Emprestimo, id=id)
     equipamento_anterior = emprestimo.equipamento
@@ -268,7 +280,8 @@ def editar_emprestimo(request, id):
     )
 
 
-
+@login_required
+@permission_required('nucleo.delete_emprestimo', raise_exception=True)
 def excluir_emprestimo(request, id):
     emprestimo = get_object_or_404(Emprestimo, id=id)
 
@@ -288,7 +301,8 @@ def excluir_emprestimo(request, id):
     })
 
 
-
+@login_required
+@permission_required('nucleo.view_emprestimo', raise_exception=True)
 def controle_epi(request):
     emprestimos = Emprestimo.objects.select_related(
         'equipamento', 'colaborador'
@@ -318,15 +332,11 @@ def controle_epi(request):
         'status': status,
     })
 
-
+@login_required
 def perfil(request):
     return render(request, 'nucleo/perfil.html')
 
-
+@login_required
 def sistema(request):
     return render(request, 'nucleo/sistema.html')
 
-
-def sair(request):
-    logout(request)
-    return redirect('home')

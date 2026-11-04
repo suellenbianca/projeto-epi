@@ -16,6 +16,7 @@ Including another URLconf
 """
 
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
@@ -87,5 +88,14 @@ urlpatterns = [
     ),
     path('perfil/', views.perfil, name='perfil'),
     path('sistema/', views.sistema, name='sistema'),
-    path('sair/', views.sair, name='sair'),
+    path('login/',
+         auth_views.LoginView.as_view(
+         template_name='nucleo/login.html'
+    ),
+    name='login'
+    ),
+    path('logout/',
+         auth_views.LogoutView.as_view(),
+         name='logout'
+    ),
 ]

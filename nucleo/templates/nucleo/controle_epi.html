@@ -7,9 +7,11 @@
             <h1>Controle de EPI</h1>
             <p>Consulte os equipamentos entregues aos colaboradores.</p>
         </div>
+     {% if perms.nucleo.add_emprestimo %}
         <a href="{% url 'cadastrar_emprestimo' %}" class="botao">
             + Novo registro
         </a>
+     {% endif %}
     </div>
 
     <form method="GET" class="filtros">
@@ -73,9 +75,11 @@
                     <td>{{ emprestimo.equipamento.nome }}</td>
                     <td>{{ emprestimo.colaborador.nome }}</td>
                     <td>
+                     {% if perms.nucleo.change_emprestimo %}
                         <a href="{% url 'editar_emprestimo' emprestimo.id %}">
                             Editar
                         </a>
+                     {% endif %}
                     </td>
                 </tr>
                 {% empty %}

@@ -30,8 +30,10 @@
          <a href="{% url 'sistema' %}">Sistema</a>
 
          <h3>Conta</h3>
-         <a href="{% url 'sair' %}">Sair</a>
-
+         <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Sair</button>
+         </form>
         </aside>
 
         <main class="conteudo">

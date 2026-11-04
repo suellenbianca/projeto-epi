@@ -5,11 +5,13 @@
     <h1>Gestão de Colaboradores</h1>
     <p>Cadastre e gerencie os colaboradores.</p>
 
+{% if perms.nucleo.add_colaborador %}
     <p>
         <a class="botao" href="{% url 'cadastrar_colaborador' %}">
             + Cadastrar colaborador
         </a>
     </p>
+{% endif %}
 
     <h1>Lista de Colaboradores</h1>
 
@@ -52,8 +54,13 @@
                     <td>{{ colaborador.telefone }}</td>
                     <td>{{ colaborador.email }}</td>
                     <td class="acoes">
+                    {% if perms.nucleo.change_colaborador %}
                         <a href="{% url 'editar_colaborador' colaborador.id %}">Editar</a>
+                    {% endif %}
+
+                    {% if perms.nucleo.delete_colaborador %}
                         <a href="{% url 'excluir_colaborador' colaborador.id %}">Excluir</a>
+                    {% endif %}
                     </td>
                 </tr>
                 {% empty %}

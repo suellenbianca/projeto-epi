@@ -1,9 +1,9 @@
-
 {% extends 'nucleo/base.html' %}
 
 {% block content %}
 <div class="painel">
     <h1>Perfil</h1>
-    <p>Área destinada às informações do perfil do usuário.</p>
+    <p>Usuário conectado: <strong>{{ request.user.username }}</strong></p>
+    <p>Nome: {{ request.user.get_full_name|default:"Não informado" }}</p>
 </div>
 {% endblock %}
